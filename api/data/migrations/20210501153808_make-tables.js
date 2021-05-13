@@ -1,6 +1,13 @@
 
 exports.up = async (knex) => {
     await knex.schema
+      .createTable("users", (users) => {
+        users.increments("user_id");
+        users.string("username", 200).notNullable().unique();
+        users.string("password", 200).notNullable();
+        users.string("role", 200).notNullable();
+        users.timestamps(false, true);
+      })
       .createTable('genre', (tbl) => {
         tbl.increments('genre_id')
         tbl.string('genre_name', 200).notNullable()
@@ -64,6 +71,12 @@ exports.up = async (knex) => {
           .inTable("book_finished")
           .onDelete("CASCADE")
           .onUpdate("CASCADE");
+      tbl.integer("users")
+          .unsigned()
+          .references("user_id")
+          .inTable("users")
+          .onDelete("CASCADE")
+          .onUpdate("CASCADE");
         })
   }
   
@@ -74,5 +87,6 @@ exports.up = async (knex) => {
     await knex.schema.dropTableIfExists('source')
     await knex.schema.dropTableIfExists('author')
     await knex.schema.dropTableIfExists('genre')
+    await knex.schema.dropTableIfExists('users')
   }
   
